@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PTO Accrual Calculator — Vacation Time Earned | PtoAccrual</title>
+<meta name="description" content="PTO earned by accrual policy, with carryover caps and payout rules.">
+<link rel="canonical" href="https://ptoaccrual.fixoraa.tech/">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="PTO Accrual Calculator — Vacation Time Earned | PtoAccrual">
+<meta property="og:description" content="PTO earned by accrual policy, with carryover caps and payout rules.">
+<meta property="og:url" content="https://ptoaccrual.fixoraa.tech/">
+<meta property="og:type" content="website">
+<script defer src="https://t.fixoraa.tech/track.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "PtoAccrual",
+      "url": "https://ptoaccrual.fixoraa.tech",
+      "applicationCategory": "HR Tools",
+      "operatingSystem": "Web",
+      "description": "PTO earned by accrual policy, with carryover caps and payout rules.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "How does PTO accrual work?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Instead of granting vacation upfront, many employers let you earn it gradually — for example, 4 hours per biweekly pay period or 0.0577 hours for every hour worked. Your balance grows each paycheck until you use time off or hit a cap." } },
+        { "@type": "Question", "name": "How much PTO do you earn per pay period?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Divide your annual grant by the number of pay periods: 15 days per year on a biweekly schedule is 15 ÷ 26 = 0.58 days per paycheck. Hourly plans often use a rate like 0.0385 to 0.0769 PTO hours per hour worked." } },
+        { "@type": "Question", "name": "What is a PTO carryover cap?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A cap limits how much unused PTO you can carry into the next year — commonly 1 to 1.5 times your annual grant. Once your balance hits the cap, you stop accruing until you use some, so hours above the cap are effectively lost." } },
+        { "@type": "Question", "name": "Is use-it-or-lose-it PTO legal?",
+          "acceptedAnswer": { "@type": "Answer", "text": "It depends on the state. California, Colorado, Illinois and Montana prohibit forfeiting earned vacation; most other states allow use-it-or-lose-it policies if they are written clearly. Always check your state law and your handbook." } },
+        { "@type": "Question", "name": "Do companies have to pay out unused PTO when you quit?",
+          "acceptedAnswer": { "@type": "Answer", "text": "In states like California, Colorado and Illinois, yes — earned vacation is wages and must be paid out. In most other states, payout is required only if company policy promises it. Some states distinguish vacation (often payable) from sick leave (often not)." } },
+        { "@type": "Question", "name": "How do I avoid losing PTO to a cap?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Project your balance a few months ahead, schedule time off before you hit the cap, and remember that accrual pauses at the cap — every paycheck at the cap is free labor you donated. Set a calendar reminder each quarter to check your balance." } }
+      ]
+    }
+  ]
+}
+</script>
+<style>
+:root{
+  --bg:#F9E1EA; --surface:#FFFFFF; --tint:#F4D2DE;
+  --accent:#84153D; --accent-deep:#5A4E14; --accent-ink:#FFFFFF;
+  --ink:#2A2517; --muted:#6B6248; --line:#E2D8B8;
+  --display:'Karla',system-ui,sans-serif; --body:'Karla',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.65;font-size:16px}
+.fx-container{max-width:1120px;margin:0 auto;padding:0 20px}
+/* header */
+.fx-header{background:var(--surface);border-bottom:3px solid var(--accent);position:sticky;top:0;z-index:50}
+.fx-header .fx-container{display:flex;align-items:center;gap:14px;padding:12px 20px;flex-wrap:wrap}
+.fx-logo{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)}
+.fx-tile{width:44px;height:44px;border-radius:10px;background:var(--surface);border:3px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:21px;box-shadow:2px 2px 0 var(--accent)}
+.fx-name{font-weight:800;font-size:20px;letter-spacing:-.01em}
+.fx-nav{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.fx-btn{display:inline-block;padding:9px 18px;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;border:2px solid var(--accent);color:var(--accent);background:var(--surface)}
+.fx-btn.solid{background:var(--accent);color:var(--accent-ink)}
+.fx-badge{display:inline-block;padding:7px 14px;border-radius:10px;background:var(--tint);color:var(--accent-deep);font-weight:700;font-size:13px;border:2px dashed var(--accent)}
+/* hero */
+.pa-hero{padding:42px 0 4px}
+.pa-eyebrow{display:inline-block;font-size:12.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.pa-hero h1{font-size:clamp(30px,4.6vw,46px);line-height:1.1;letter-spacing:-.02em;font-weight:800;margin-bottom:10px}
+.pa-hero p{font-size:17.5px;color:var(--muted);max-width:660px}
+/* notebook sheet */
+.pa-sheet{margin:26px 0 8px;background:var(--surface);border:2px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(124,107,29,.12);overflow:hidden}
+.pa-tabs{display:flex;border-bottom:2px solid var(--line)}
+.pa-tab{flex:1;padding:14px;font:inherit;font-weight:800;font-size:15px;background:var(--tint);border:0;border-right:2px solid var(--line);cursor:pointer;color:var(--muted)}
+.pa-tab:last-child{border-right:0}
+.pa-tab.on{background:var(--surface);color:var(--accent-deep);box-shadow:inset 0 3px 0 var(--accent)}
+.pa-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.pa-form{padding:26px;border-right:2px dashed var(--line)}
+.pa-form h2,.pa-out h2{font-size:16px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:14px}
+.field{margin-bottom:16px}
+.field label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
+.field input,.field select{font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:10px;width:100%;background:#fff;color:var(--ink)}
+.field input:focus,.field select:focus{outline:3px solid var(--tint);border-color:var(--accent)}
+.field .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pa-out{padding:26px;background:linear-gradient(180deg,#FFFDF7,var(--bg))}
+.pa-bignum{background:var(--accent);color:#fff;border-radius:14px;padding:20px;text-align:center;margin-bottom:16px}
+.pa-bignum .n{font-size:54px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.pa-bignum .l{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.92;margin-top:6px}
+.pa-timeline{margin-bottom:16px}
+.pa-timeline .trow{display:grid;grid-template-columns:88px 1fr 64px;gap:10px;align-items:center;font-size:14px;margin-bottom:7px}
+.pa-timeline .tbar{height:14px;background:#fff;border:1.5px solid var(--line);border-radius:999px;overflow:hidden}
+.pa-timeline .tfill{height:100%;background:linear-gradient(90deg,var(--accent),#A8942A);border-radius:999px}
+.pa-timeline .tnum{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.pa-flag{border-radius:10px;padding:12px 15px;font-size:14.5px;margin-bottom:10px;display:flex;gap:10px;align-items:flex-start}
+.pa-flag.warn{background:#FDF3E3;border:1.5px solid #D9A441;color:#7A4d12}
+.pa-flag.info{background:var(--tint);border:1.5px solid var(--accent);color:var(--accent-deep)}
+.pa-flag .ic{font-size:19px;flex:none}
+.pa-state{font-size:14.5px;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 15px;color:var(--muted)}
+.pa-state b{color:var(--accent-deep)}
+/* article */
+.article-sec{margin:42px 0;max-width:780px}
+.article-sec h2{font-size:24px;letter-spacing:-.02em;margin:34px 0 12px;font-weight:800;color:var(--accent-deep)}
+.article-sec p{margin-bottom:14px;color:#3a3320}
+.article-sec ul,.article-sec ol{margin:0 0 14px 22px;color:#3a3320}
+.article-sec li{margin-bottom:6px}
+/* faq */
+.faq-sec{margin:36px 0;max-width:780px}
+.faq-sec h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:14px;color:var(--accent-deep)}
+.faq-sec details{background:var(--surface);border:2px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.faq-sec summary{padding:14px 18px;font-weight:700;cursor:pointer;list-style:none;font-size:16px}
+.faq-sec summary::-webkit-details-marker{display:none}
+.faq-sec summary:hover{color:var(--accent-deep)}
+.faq-sec details[open] summary{color:var(--accent-deep);border-bottom:2px solid var(--line)}
+.faq-sec details p{padding:12px 18px;color:#3a3320;font-size:15px}
+/* footer */
+.fx-footer{background:#2e2a17;color:#efe8d2;margin-top:46px;padding:42px 0 36px}
+.fx-footer .fx-brand{font-size:22px;font-weight:800;margin-bottom:8px;color:#fff}
+.fx-footer p{font-size:15px;color:#bfb489;max-width:640px;margin-bottom:14px}
+.fx-footer nav{display:flex;gap:18px;margin-bottom:16px}
+.fx-footer nav a{color:#fff;font-weight:700;text-decoration:none;border-bottom:2px solid var(--accent)}
+.fx-credit{font-size:14px!important}
+.fx-credit a{color:#d9c86e;font-weight:700}
+@media(max-width:820px){
+  .pa-body{grid-template-columns:1fr}
+  .pa-form{border-right:0;border-bottom:2px dashed var(--line)}
+  .fx-nav{margin-left:0}
+}
+</style>
+</head>
+<body>
+<header class="fx-header">
+  <div class="fx-container">
+    <a class="fx-logo" href="https://ptoaccrual.fixoraa.tech/" aria-label="PtoAccrual home">
+      <span class="fx-tile" aria-hidden="true">P</span>
+      <span class="fx-name">PtoAccrual</span>
+    </a>
+    <nav class="fx-nav" aria-label="Site">
+      <a class="fx-btn" href="https://fixoraa.tech">Home</a>
+      <a class="fx-btn solid" href="https://fixoraa.tech">More Tools</a>
+      <span class="fx-badge">&#8734; Unlimited Free Usage</span>
+    </nav>
+  </div>
+</header>
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pt-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <div class="origin-top scale-[0.44] sm:scale-100 shrink-0">
+        <script>
+          atOptions = { 'key' : '4e68ac77881c17fe128a46565d9a4e8c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highrevenueformat.com/4e68ac77881c17fe128a46565d9a4e8c/invoke.js"></script>
+      </div>
+    </div>
+  </div>
+</div>
+<main class="fx-container">
+  <section class="pa-hero">
+    <span class="pa-eyebrow">HR notebook</span>
+    <h1>PTO Accrual Calculator</h1>
+    <p>Your vacation balance is earned a little every paycheck. See exactly how fast it grows, when the cap stops it, and what your state says about payout.</p>
+  </section>
+
+  <section class="pa-sheet" aria-label="PtoAccrual tool">
+    <div class="pa-tabs" role="tablist" aria-label="Policy type">
+      <button class="pa-tab on" id="pa-tab-sal" role="tab" aria-selected="true">Salaried policy</button>
+      <button class="pa-tab" id="pa-tab-hr" role="tab" aria-selected="false">Hourly policy</button>
+    </div>
+    <div class="pa-body">
+      <div class="pa-form">
+        <h2>Your policy</h2>
+        <div id="pa-salfields">
+          <div class="field"><label for="pa-annual">Vacation days per year</label><input type="number" id="pa-annual" value="15" min="0" max="60" step="0.5"></div>
+          <div class="field"><label for="pa-freq">Pay frequency</label>
+            <select id="pa-freq">
+              <option value="52">Weekly (52)</option>
+              <option value="26" selected>Biweekly (26)</option>
+              <option value="24">Semimonthly (24)</option>
+              <option value="12">Monthly (12)</option>
+            </select>
+          </div>
+        </div>
+        <div id="pa-hrfields" hidden>
+          <div class="field"><label for="pa-rate">Accrual rate (PTO hrs per hour worked)</label><input type="number" id="pa-rate" value="0.0577" min="0" max="0.5" step="0.0001"></div>
+          <div class="field"><label for="pa-hpp">Hours worked per pay period</label><input type="number" id="pa-hpp" value="80" min="0" max="120" step="1"></div>
+          <div class="field"><label for="pa-freqh">Pay frequency</label>
+            <select id="pa-freqh">
+              <option value="52">Weekly (52)</option>
+              <option value="26" selected>Biweekly (26)</option>
+              <option value="24">Semimonthly (24)</option>
+              <option value="12">Monthly (12)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <div class="row2">
+            <div><label for="pa-start">Current balance (days)</label><input type="number" id="pa-start" value="5" min="0" step="0.5"></div>
+            <div><label for="pa-periods">Periods ahead</label><input type="number" id="pa-periods" value="10" min="1" max="52" step="1"></div>
+          </div>
+        </div>
+        <div class="field"><label for="pa-used">Planned time off in that span (days)</label><input type="number" id="pa-used" value="3" min="0" step="0.5"></div>
+        <div class="field">
+          <div class="row2">
+            <div><label for="pa-cap">Carryover cap (days, 0 = none)</label><input type="number" id="pa-cap" value="0" min="0" step="0.5"></div>
+            <div><label for="pa-state">State</label><select id="pa-state"></select></div>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label style="display:flex;gap:9px;align-items:center;cursor:pointer;font-weight:600"><input type="checkbox" id="pa-uiol" style="width:18px;height:18px;accent-color:var(--accent)"> Use-it-or-lose-it policy</label>
+        </div>
+      </div>
+      <div class="pa-out" aria-live="polite">
+        <h2>Projection</h2>
+        <div class="pa-bignum">
+          <div class="n" id="pa-bal">7.77</div>
+          <div class="l">days after <span id="pa-plbl">10</span> pay periods</div>
+        </div>
+        <div class="pa-timeline" id="pa-timeline"></div>
+        <div id="pa-flags"></div>
+        <div class="pa-state" id="pa-statenote"></div>
+      </div>
+    </div>
+  </section>
+
+  <article class="article-sec" aria-label="Guide">
+    <h2>How PTO Accrual Actually Works</h2>
+    <p>Many employers do not hand you vacation on January 1st — you <strong>earn it gradually</strong>, a little with every paycheck. A salaried employee granted 15 days a year on a biweekly schedule accrues 15 ÷ 26 = <strong>0.58 days per pay period</strong>. An hourly employee might earn 0.0577 PTO hours for every hour worked — 4.6 hours per 80-hour pay period. Either way, the balance ticks upward continuously, which is why checking it quarterly (not annually) is the habit that saves people from nasty surprises.</p>
+    <p>The accrual model exists to protect employers from new hires taking three weeks in February and quitting in March. But it creates its own traps for employees: <strong>caps that silently pause your accrual</strong>, use-it-or-lose-it cliffs, and payout rules that vary wildly by state. This guide covers the mechanics, the traps, and the simple system for never donating vacation back to your employer.</p>
+    <h2>Doing the Per-Paycheck Math</h2>
+    <p>For <strong>salaried policies</strong>, the formula is annual grant ÷ pay periods per year. Weekly pay (52 periods) accrues the smallest slices; monthly pay (12) the largest. Fifteen days a year means 0.29 days weekly, 0.58 biweekly, 0.63 semimonthly, or 1.25 monthly. These look tiny per check — that is the point; they compound into real vacations.</p>
+    <p>For <strong>hourly policies</strong>, multiply the rate by hours worked: 0.0577 × 80 hours = 4.62 hours per biweekly period, or about 15 days a year for full-time work. Part-timers accrue proportionally less, which surprises people switching from full-time: your rate did not change, your hours did. Note the common rate landmarks: 0.0385 ≈ 10 days/year, 0.0577 ≈ 15 days/year, 0.0769 ≈ 20 days/year for full-time schedules.</p>
+    <h2>Carryover Caps: The Silent Balance Killer</h2>
+    <p>A <strong>carryover cap</strong> limits how much PTO you can hold — commonly 1 to 1.5× your annual grant (so 20–22.5 days on a 15-day grant). The cruel mechanic: <strong>accrual pauses while you are at the cap</strong>. Every paycheck at the cap is vacation time you earned on paper and will never receive. Unlike a use-it-or-lose-it cliff, there is no dramatic deadline — just a slow leak of a day here, half a day there, invisible on most pay stubs.</p>
+    <p>The calculator flags exactly when your projection hits the cap and how many days you would forfeit. The defense is scheduling: project your balance a quarter ahead (the timeline above does this visually) and book time off <em>before</em> the cap bites. If your balance hovers near the cap year-round, that is data — you are structurally unable to use what you earn, and it is worth raising with your manager, not just accepting.</p>
+    <h2>Use-It-or-Lose-It and State Law</h2>
+    <p><strong>Use-it-or-lose-it</strong> policies wipe unused PTO at year-end (or at an anniversary date). They are legal in most states <em>if</em> the policy is written and communicated — but <strong>California, Colorado, Illinois, and Montana ban forfeiture of earned vacation</strong> outright. In those states, "use it or lose it" is unenforceable, and accrued vacation is treated as wages you own.</p>
+    <p>Payout at termination follows similar lines. In California, Colorado, Illinois, and Montana, <strong>earned unused vacation must be paid out</strong> when you leave — it is wages. In most other states (Texas, New York, Florida, and others), payout is required <strong>only if company policy promises it</strong> — check your handbook, because the promise is often there in writing. A subtle distinction in several states: <em>vacation</em> may be payable while <em>sick leave</em> is not, so know which bucket your PTO sits in. None of this is legal advice — but it tells you which questions to ask HR before you assume.</p>
+    <h2>Tenure Bumps and Front-Loading</h2>
+    <p>Many companies increase grants with tenure — 10 days for years 1–2, 15 for years 3–5, 20 beyond. If a bump lands mid-projection, model the year in two segments rather than averaging; the calculator's "periods ahead" field handles any horizon. Some employers <strong>front-load</strong> (grant the full year upfront) instead of accruing — simpler for employees, riskier for employers. A few do <strong>unlimited PTO</strong>, which studies consistently show leads to employees taking <em>less</em> time off; if that is your policy, set your own annual target (15+ days) and treat it as a quota.</p>
+    <h2>The Quarterly System That Prevents Losses</h2>
+    <p>Here is the entire system: <strong>every quarter, project your balance to year-end</strong> using the calculator above, and if the projection exceeds (cap − planned time off), book a trip. That is it. Four two-minute checks a year eliminate both cap forfeiture and December panic-booking. Put a recurring calendar reminder for the first Monday of each quarter — "PTO check" — and keep the calculator bookmarked.</p>
+    <p>Two more habits. First, <strong>request early for peak periods</strong> — summer weeks and holidays are first-come, first-served in most teams, and "I couldn't get the time approved" is how balances die at the cap. Second, <strong>track in days, think in experiences</strong>: "7.77 days" is abstract; "a full week in October plus two long weekends" is a plan you will actually execute.</p>
+    <h2>Negotiating PTO (Yes, It's Negotiable)</h2>
+    <p>Vacation is one of the most negotiable — and least negotiated — parts of a job offer. Companies with rigid salary bands often have flexible PTO; asking for 20 days instead of 15 costs them little and buys you a lot. Frame it as tenure recognition ("my current role gives me 18 days") rather than a demand. And get it in writing: verbal PTO promises evaporate, while handbook language endures. If they will not move on days, negotiate the <em>accrual start</em> (immediate vs 90-day wait) or remote-work flexibility as consolation.</p>
+    <h2>What the Numbers Mean for You</h2>
+    <p>Run your real policy above: your grant, your pay frequency, your current balance, your planned time off. If the projection shows steady growth with headroom under the cap, you are in good shape — just keep the quarterly habit. If it shows cap forfeiture or a use-it-or-lose-it cliff approaching, you have a concrete number to act on: <em>book N days by M date</em>. Vacation you earned is compensation you earned. The calculator's job is to make sure none of it quietly stays on the table.</p>
+    <h2>Sick Leave vs. Vacation: Know Your Buckets</h2>
+    <p>Not all PTO is the same bucket, and the distinction has legal teeth. <strong>Vacation</strong> is generally treated as earned wages in payout states — accrued, bankable, and payable at termination in California, Colorado, Illinois, and Montana. <strong>Sick leave</strong> is often treated differently: many states that mandate sick-leave payout exemptions let employers expire it, cap it lower, or deny payout entirely. When your employer offers a single combined "PTO" bucket, the whole balance usually inherits vacation's stronger protections; when they split them, each bucket plays by its own rules.</p>
+    <p>This matters in three practical moments. First, <strong>at hiring</strong>: ask whether the buckets are combined or separate, because 15 days of combined PTO is worth more than 10 vacation + 5 sick days that cannot be repurposed. Second, <strong>at the cap</strong>: some employers cap vacation but not sick leave, or vice versa — the calculator's cap field should reflect the bucket you are actually modeling. Third, <strong>at exit</strong>: in payout states, your vacation balance converts to a final paycheck line item, while sick leave typically evaporates — so in your last months, spend sick days on actual illness and preserve vacation for the payout. None of this is legal advice, but knowing which bucket you are looking at changes every decision the calculator informs.</p>
+  </article>
+  <section class="faq-sec" aria-label="Frequently asked questions">
+    <h2>Frequently asked questions</h2>
+    <details><summary>How does PTO accrual work?</summary><p>You earn vacation gradually each pay period — e.g., 4 hours per biweekly paycheck or 0.0577 hours per hour worked. Your balance grows until you use time off or hit a cap.</p></details>
+    <details><summary>How much PTO do you earn per pay period?</summary><p>Annual grant ÷ pay periods: 15 days/year biweekly = 0.58 days per check. Hourly plans commonly use 0.0385–0.0769 PTO hours per hour worked.</p></details>
+    <details><summary>What is a PTO carryover cap?</summary><p>A limit on banked PTO, often 1–1.5× your annual grant. At the cap, accrual pauses — every paycheck at the cap is earned time you never receive.</p></details>
+    <details><summary>Is use-it-or-lose-it PTO legal?</summary><p>In most states, yes, if the policy is written. But California, Colorado, Illinois and Montana prohibit forfeiting earned vacation. Check your state law and handbook.</p></details>
+    <details><summary>Do companies have to pay out unused PTO when you quit?</summary><p>In CA, CO, IL and MT, yes — it is wages. Elsewhere, usually only if company policy promises it. Vacation and sick leave are often treated differently.</p></details>
+    <details><summary>How do I avoid losing PTO to a cap?</summary><p>Project your balance quarterly, schedule time off before hitting the cap, and set a calendar reminder — accrual pauses at the cap, so idle balances cost you real days.</p></details>
+  </section>
+</main>
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pb-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:300px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <script>
+      (function(grnp){
+      var d = document,
+          s = d.createElement('script'),
+          l = d.currentScript || d.scripts[d.scripts.length - 1];
+      s.settings = grnp || {};
+      s.src = "\/\/peacefulbicycle.com\/bnXtVJsnd.GElF0oYVWQcY\/Qe\/mf9qu-ZqUtlZk\/PzTHcx1LM\/jWIZwkMTj\/U\/t-NrzmUnyOMsj\/AzydO\/Qx";
+      s.async = true;
+      s.referrerPolicy = 'no-referrer-when-downgrade';
+      l.parentNode.insertBefore(s, l);
+      })({})
+      </script>
+    </div>
+  </div>
+</div>
+<footer class="fx-footer">
+  <div class="fx-container">
+    <div class="fx-brand">PtoAccrual</div>
+    <p>PtoAccrual projects your vacation balance paycheck by paycheck — accrual math, carryover cap warnings, and state payout rules in one notebook page.</p>
+    <nav aria-label="Footer">
+      <a href="https://fixoraa.tech">Home</a>
+      <a href="https://fixoraa.tech">More Tools</a>
+    </nav>
+    <p class="fx-credit">Made by <a href="https://fixoraa.tech">Fixoraa</a> &middot; Free forever, no signup.</p>
+  </div>
+</footer>
+<script>
+/* ===== pure ===== */
+var PTO_STATES = {
+  CA:'Payout required — vacation is earned wages; use-it-or-lose-it is illegal in California.',
+  CO:'Payout required — earned vacation cannot be forfeited in Colorado.',
+  IL:'Payout required for earned vacation in Illinois.',
+  MT:'Payout required — Montana prohibits forfeiture of earned vacation.',
+  TX:'Payout only if your company policy promises it.',
+  NY:'Payout only if company policy promises it.',
+  FL:'Payout only if company policy promises it.',
+  Other:'Rules vary — check your handbook and state labor department.'
+};
+function ptoProject(d){
+  var perPeriod;
+  if(d.mode==='salaried'){ perPeriod = d.annual/d.freq; }
+  else { perPeriod = d.rate*d.hpp/8; }
+  var bal = d.start, forfeited = 0, hitCap = -1;
+  var points = [{p:0, bal:bal}];
+  for(var i=1;i<=d.periods;i++){
+    bal += perPeriod;
+    if(d.cap>0 && bal>d.cap){ forfeited += (bal-d.cap); bal=d.cap; if(hitCap<0) hitCap=i; }
+    points.push({p:i, bal:bal});
+  }
+  bal -= d.used;
+  if(bal<0) bal=0;
+  return {perPeriod:perPeriod, balance:bal, forfeited:forfeited, hitCap:hitCap, points:points};
+}
+/* ===== dom ===== */
+(function(){
+var mode='salaried';
+var sel=document.getElementById('pa-state');
+Object.keys(PTO_STATES).forEach(function(k){ var o=document.createElement('option'); o.value=k; o.textContent=(k==='Other'?'Other state':k); sel.appendChild(o); });
+sel.value='CA';
+function num(id){ return parseFloat(document.getElementById(id).value)||0; }
+var tabS=document.getElementById('pa-tab-sal'), tabH=document.getElementById('pa-tab-hr');
+function setMode(m){
+  mode=m;
+  tabS.classList.toggle('on', m==='salaried'); tabH.classList.toggle('on', m==='hourly');
+  tabS.setAttribute('aria-selected', m==='salaried'); tabH.setAttribute('aria-selected', m==='hourly');
+  document.getElementById('pa-salfields').hidden = m!=='salaried';
+  document.getElementById('pa-hrfields').hidden = m!=='hourly';
+  calc();
+}
+tabS.addEventListener('click',function(){setMode('salaried');});
+tabH.addEventListener('click',function(){setMode('hourly');});
+function calc(){
+  var d = {mode:mode, annual:num('pa-annual'), freq:parseFloat(document.getElementById('pa-freq').value),
+           rate:num('pa-rate'), hpp:num('pa-hpp'), start:num('pa-start'),
+           periods:Math.max(1,Math.round(num('pa-periods'))), used:num('pa-used'), cap:num('pa-cap')};
+  if(mode==='hourly') d.freq=parseFloat(document.getElementById('pa-freqh').value);
+  var r = ptoProject(d);
+  document.getElementById('pa-bal').textContent = r.balance.toFixed(2);
+  document.getElementById('pa-plbl').textContent = d.periods;
+  var tl=document.getElementById('pa-timeline'); tl.innerHTML='';
+  var maxBal = Math.max.apply(null, r.points.map(function(p){return p.bal;}).concat([d.cap>0?d.cap:0, 1]));
+  var steps=[0, Math.ceil(d.periods/2), d.periods];
+  steps.forEach(function(s){
+    var p=r.points[s];
+    var row=document.createElement('div'); row.className='trow';
+    row.innerHTML='<span>Period '+p.p+'</span><div class="tbar"><div class="tfill" style="width:'+(p.bal/maxBal*100).toFixed(1)+'%"></div></div><span class="tnum">'+p.bal.toFixed(1)+'d</span>';
+    tl.appendChild(row);
+  });
+  var fl=document.getElementById('pa-flags'); fl.innerHTML='';
+  function flag(kind, html){
+    var d2=document.createElement('div'); d2.className='pa-flag '+kind;
+    d2.innerHTML='<span class="ic">'+(kind==='warn'?'&#9888;':'&#9432;')+'</span><span>'+html+'</span>';
+    fl.appendChild(d2);
+  }
+  flag('info','You earn <b>'+r.perPeriod.toFixed(3)+' days</b> per pay period ('+(r.perPeriod*8).toFixed(2)+' hours).');
+  if(r.forfeited>0.005) flag('warn','<b>Cap hit at period '+r.hitCap+':</b> you would forfeit <b>'+r.forfeited.toFixed(2)+' days</b>. Schedule time off before then.');
+  else if(d.cap>0) flag('info','You stay under the '+d.cap+'-day cap across this horizon. Nice.');
+  if(document.getElementById('pa-uiol').checked) flag('warn','<b>Use-it-or-lose-it is on:</b> any balance above your year-end limit vanishes — check that this is legal in your state below.');
+  document.getElementById('pa-statenote').innerHTML='<b>'+sel.value+' — </b>'+PTO_STATES[sel.value]+' <span style="font-size:12.5px">(general information, not legal advice)</span>';
+}
+['pa-annual','pa-freq','pa-rate','pa-hpp','pa-freqh','pa-start','pa-periods','pa-used','pa-cap','pa-state','pa-uiol'].forEach(function(id){
+  var el=document.getElementById(id);
+  el.addEventListener('input',calc); el.addEventListener('change',calc);
+});
+calc();
+})();
+</script>
+</body>
+</html>
